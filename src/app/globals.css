@@ -1,0 +1,349 @@
+@import "tailwindcss";
+
+/* ==========================================================
+   CHOC DES TITANS — Design System v2
+   Thème clair par défaut (dégradé premium) · Thème sombre via 🌙
+   Les composants sont écrits "dark-first" ; le bloc LIGHT MODE
+   remappe les utilitaires white/* vers l'encre, sauf dans les
+   îlots photo marqués `.dark-section`.
+   ========================================================== */
+
+:root {
+  /* Marque */
+  --cdt-blue: #266fb3;
+  --cdt-blue-light: #3d8ad4;
+  --cdt-blue-dark: #1b5288;
+  --cdt-red: #e11f21;
+  --cdt-red-dark: #b21618;
+  --cdt-gold: #b8860b;
+  --ci-orange: #e97000;
+  --ci-green: #00834f;
+
+  /* Encre (mode clair) */
+  --ink: #0f151c;
+
+  /* Sémantique — CLAIR par défaut */
+  --background: #f2f6fa;
+  --foreground: #10161d;
+  --cdt-carbon: #e9eef5;
+  --cdt-surface: #ffffff;
+  --cdt-surface-2: #f3f6fa;
+  --cdt-border: #dbe3ec;
+  --cdt-muted: #55636f;
+  --cdt-light: #f5f7fa;
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(15, 21, 28, 0.09);
+  --glass-light-bg: rgba(255, 255, 255, 0.62);
+  --glass-light-border: rgba(15, 21, 28, 0.1);
+
+  --body-gradient:
+    radial-gradient(55% 36% at 12% 0%, rgba(38, 111, 179, 0.16), transparent 65%),
+    radial-gradient(45% 30% at 88% 4%, rgba(225, 31, 33, 0.08), transparent 60%),
+    radial-gradient(50% 40% at 50% 100%, rgba(38, 111, 179, 0.08), transparent 65%),
+    linear-gradient(180deg, #f8fafd 0%, #eef3f9 45%, #e9eff7 100%);
+}
+
+[data-theme="dark"] {
+  --cdt-gold: #d9a441;
+  --ci-orange: #f77f00;
+  --ci-green: #00b268;
+
+  --background: #0b0b0b;
+  --foreground: #f4f6f8;
+  --cdt-carbon: #111214;
+  --cdt-surface: #16181b;
+  --cdt-surface-2: #1d2024;
+  --cdt-border: #26292e;
+  --cdt-muted: #9aa3ad;
+
+  --glass-bg: rgba(17, 18, 20, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-light-bg: rgba(255, 255, 255, 0.04);
+  --glass-light-border: rgba(255, 255, 255, 0.08);
+
+  --body-gradient:
+    radial-gradient(50% 35% at 15% 0%, rgba(38, 111, 179, 0.1), transparent 60%),
+    radial-gradient(40% 30% at 90% 5%, rgba(225, 31, 33, 0.05), transparent 55%),
+    linear-gradient(180deg, #0b0b0b 0%, #0b0c0e 100%);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-blue: var(--cdt-blue);
+  --color-blue-light: var(--cdt-blue-light);
+  --color-blue-dark: var(--cdt-blue-dark);
+  --color-red: var(--cdt-red);
+  --color-red-dark: var(--cdt-red-dark);
+  --color-carbon: var(--cdt-carbon);
+  --color-surface: var(--cdt-surface);
+  --color-surface-2: var(--cdt-surface-2);
+  --color-line: var(--cdt-border);
+  --color-muted: var(--cdt-muted);
+  --color-light: var(--cdt-light);
+  --color-gold: var(--cdt-gold);
+  --color-ci-orange: var(--ci-orange);
+  --color-ci-green: var(--ci-green);
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-anton), Impact, sans-serif;
+
+  --shadow-glow-blue: 0 0 40px rgba(38, 111, 179, 0.35);
+  --shadow-glow-red: 0 0 40px rgba(225, 31, 33, 0.35);
+  --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--body-gradient);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--cdt-blue);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(38, 111, 179, 0.35);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cdt-blue);
+}
+
+/* ---------- Utilitaires maison ---------- */
+
+.font-display {
+  font-family: var(--font-anton), Impact, sans-serif;
+  letter-spacing: 0.015em;
+}
+
+.section-title {
+  font-family: var(--font-anton), Impact, sans-serif;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+.text-gradient-blue {
+  background: linear-gradient(135deg, #4a95d8 0%, #266fb3 55%, #1b5288 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-fire {
+  background: linear-gradient(135deg, #ff5a5c 0%, #e11f21 60%, #a01214 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-light {
+  background: var(--glass-light-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-light-border);
+}
+
+/* Logo : halo de visibilité en sombre */
+[data-theme="dark"] .brand-logo {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.45))
+    drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
+}
+
+.hero-vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 45%, rgba(5, 5, 6, 0.55) 100%),
+    linear-gradient(to top, rgba(6, 8, 10, 0.9) 0%, rgba(6, 8, 10, 0.2) 30%, transparent 55%);
+}
+
+.clip-diagonal {
+  clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+}
+
+.clip-corner {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
+}
+
+@keyframes live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(225, 31, 33, 0.6); }
+  55% { box-shadow: 0 0 0 9px rgba(225, 31, 33, 0); }
+}
+.live-dot {
+  animation: live-pulse 1.8s ease-out infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 45s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Ken Burns lent pour les héros photo */
+@keyframes kenburns {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
+}
+.animate-kenburns {
+  animation: kenburns 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Reflet balayant les CTA rouges */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+}
+.btn-shine:hover::after {
+  left: 130%;
+}
+
+.accent-bar {
+  height: 4px;
+  width: 64px;
+  background: linear-gradient(90deg, var(--cdt-red) 0 40%, var(--cdt-blue) 40% 100%);
+  border-radius: 2px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================
+   LIGHT MODE — remappage des utilitaires white/* vers l'encre.
+   `.dark-section` (îlots photo, admin) conserve le rendu sombre.
+   ========================================================== */
+
+:root:not([data-theme="dark"]) {
+  /* — texte — */
+  & .text-white:not(:where(.dark-section, .dark-section *)) { color: var(--ink); }
+  & .text-white\/90:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.92); }
+  & .text-white\/85:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.88); }
+  & .text-white\/80:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.84); }
+  & .text-white\/75:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.8); }
+  & .text-white\/70:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.76); }
+  & .text-white\/65:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.7); }
+  & .text-white\/60:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.66); }
+  & .text-white\/55:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.6); }
+  & .text-white\/50:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.55); }
+  & .text-white\/45:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.5); }
+  & .text-white\/40:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.47); }
+  & .text-white\/35:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.42); }
+  & .text-white\/30:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.38); }
+  & .text-white\/25:not(:where(.dark-section, .dark-section *)) { color: rgba(15, 21, 28, 0.32); }
+  & .hover\:text-white:hover:not(:where(.dark-section, .dark-section *)) { color: var(--ink); }
+  & .group:hover .group-hover\:text-white:not(:where(.dark-section, .dark-section *)) { color: var(--ink); }
+  & .placeholder\:text-white\/30:not(:where(.dark-section, .dark-section *))::placeholder { color: rgba(15, 21, 28, 0.4); }
+
+  /* — fonds — */
+  & .bg-white\/5:not(:where(.dark-section, .dark-section *)) { background-color: rgba(15, 21, 28, 0.045); }
+  & .bg-white\/8:not(:where(.dark-section, .dark-section *)) { background-color: rgba(15, 21, 28, 0.06); }
+  & .bg-white\/10:not(:where(.dark-section, .dark-section *)) { background-color: rgba(15, 21, 28, 0.08); }
+  & .bg-white\/15:not(:where(.dark-section, .dark-section *)) { background-color: rgba(15, 21, 28, 0.12); }
+  & .hover\:bg-white\/5:hover:not(:where(.dark-section, .dark-section *)) { background-color: rgba(15, 21, 28, 0.05); }
+  & .hover\:bg-white\/10:hover:not(:where(.dark-section, .dark-section *)) { background-color: rgba(15, 21, 28, 0.08); }
+  & .hover\:bg-white\/12:hover:not(:where(.dark-section, .dark-section *)) { background-color: rgba(15, 21, 28, 0.1); }
+  & .hover\:bg-white\/15:hover:not(:where(.dark-section, .dark-section *)) { background-color: rgba(15, 21, 28, 0.12); }
+  & .hover\:bg-white\/20:hover:not(:where(.dark-section, .dark-section *)) { background-color: rgba(15, 21, 28, 0.16); }
+
+  /* — bordures / séparateurs / anneaux — */
+  & .border-white\/5:not(:where(.dark-section, .dark-section *)) { border-color: rgba(15, 21, 28, 0.07); }
+  & .border-white\/8:not(:where(.dark-section, .dark-section *)) { border-color: rgba(15, 21, 28, 0.09); }
+  & .border-white\/10:not(:where(.dark-section, .dark-section *)) { border-color: rgba(15, 21, 28, 0.12); }
+  & .hover\:border-white\/20:hover:not(:where(.dark-section, .dark-section *)) { border-color: rgba(15, 21, 28, 0.22); }
+  & .hover\:border-white\/25:hover:not(:where(.dark-section, .dark-section *)) { border-color: rgba(15, 21, 28, 0.27); }
+  & .divide-white\/6:not(:where(.dark-section, .dark-section *)) > :not([hidden]) ~ :not([hidden]) { border-color: rgba(15, 21, 28, 0.08); }
+  & .divide-white\/8:not(:where(.dark-section, .dark-section *)) > :not([hidden]) ~ :not([hidden]) { border-color: rgba(15, 21, 28, 0.1); }
+  & .ring-white\/10:not(:where(.dark-section, .dark-section *)) { --tw-ring-color: rgba(15, 21, 28, 0.14); }
+  & .ring-white\/15:not(:where(.dark-section, .dark-section *)) { --tw-ring-color: rgba(15, 21, 28, 0.18); }
+
+  /* — ombres plus douces en clair — */
+  & .shadow-card:not(:where(.dark-section, .dark-section *)) { box-shadow: 0 10px 32px rgba(23, 43, 66, 0.12); }
+}
+
+/* Les îlots sombres conservent leurs variables sombres même en thème clair */
+:root:not([data-theme="dark"]) .dark-section {
+  --cdt-gold: #d9a441;
+  --ci-orange: #f77f00;
+  --ci-green: #00b268;
+  --cdt-carbon: #111214;
+  --cdt-surface: #16181b;
+  --cdt-surface-2: #1d2024;
+  --cdt-border: #26292e;
+  --cdt-muted: #9aa3ad;
+  --glass-bg: rgba(17, 18, 20, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-light-bg: rgba(255, 255, 255, 0.04);
+  --glass-light-border: rgba(255, 255, 255, 0.08);
+}
+
+/* Les surfaces pleines colorées gardent leur texte blanc en mode clair */
+:root:not([data-theme="dark"]) :is(.bg-red, .bg-red-dark, .bg-blue, .bg-blue-dark, .bg-ci-green, .bg-ci-orange):is(.text-white, :has(> .text-white)),
+:root:not([data-theme="dark"]) :is(.bg-red, .bg-red-dark, .bg-blue, .bg-blue-dark, .bg-ci-green, .bg-ci-orange).text-white {
+  color: #ffffff;
+}
+:root:not([data-theme="dark"]) :is(.bg-red, .bg-red-dark, .bg-blue, .bg-blue-dark, .bg-ci-green, .bg-ci-orange) .text-white {
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee,
+  .live-dot,
+  .animate-kenburns {
+    animation: none;
+  }
+  .btn-shine::after {
+    display: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
