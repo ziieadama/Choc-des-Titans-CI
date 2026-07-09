@@ -1,7 +1,5 @@
 import "server-only";
-import { promises as fs } from "fs";
-import path from "path";
-import { DATA_DIR, loadSettings } from "./store";
+import { readJson, writeJson, loadSettings } from "./store";
 
 /**
  * Intégration YouTube Data API v3 — 100% côté serveur.
@@ -27,7 +25,7 @@ interface YtCache {
   videos: YtVideo[];
 }
 
-const CACHE_FILE = path.join(DATA_DIR, "youtube-cache.json");
+const CACHE_FILE = "youtube-cache.json";
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 const API = "https://www.googleapis.com/youtube/v3";
 
@@ -37,18 +35,8 @@ const FIGHT_RE =
 const classify = (title: string, description: string): YtVideo["category"] =>
   FIGHT_RE.test(`${title} ${description}`) ? "combat" : "actu";
 
-async function readCache(): Promise<YtCache | null> {
-  try {
-    return JSON.parse(await fs.readFile(CACHE_FILE, "utf-8")) as YtCache;
-  } catch {
-    return null;
-  }
-}
-
-async function writeCache(cache: YtCache) {
-  await fs.mkdir(path.dirname(CACHE_FILE), { recursive: true });
-  await fs.writeFile(CACHE_FILE, JSON.stringify(cache, null, 1), "utf-8");
-}
+const readCache = () => readJson<YtCache | null>(CACHE_FILE, null);
+const writeCache = (cache: YtCache) => writeJson(CACHE_FILE, cache);
 
 async function ytFetch(pathAndQuery: string, key: string) {
   const res = await fetch(`${API}/${pathAndQuery}&key=${key}`, {

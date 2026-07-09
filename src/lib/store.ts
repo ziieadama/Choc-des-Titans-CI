@@ -1,6 +1,8 @@
 import "server-only";
 import { promises as fs } from "fs";
 import path from "path";
+import { createHash } from "crypto";
+import { put, head, del } from "@vercel/blob";
 import { news as newsSeed } from "@/data/news";
 import { partners as partnersSeed } from "@/data/partners";
 import { fighters as fightersSeed } from "@/data/fighters";
@@ -15,16 +17,38 @@ import type { CommuneInfo, Edition, Fighter, NewsArticle, Partner } from "@/data
  */
 
 /**
- * Répertoire de persistance :
- * - en local : ./data-store (durable)
- * - sur Vercel : /tmp (éphémère — les écritures fonctionnent mais se
- *   réinitialisent au redéploiement ; migrer vers une vraie base pour la prod).
+ * Persistance :
+ * - avec BLOB_READ_WRITE_TOKEN (Vercel Blob) : stockage partagé et durable,
+ *   les modifications du back office sont visibles par toutes les instances ;
+ * - sinon (dev sans token) : fichiers JSON locaux dans ./data-store.
+ *
+ * Les fichiers JSON vivent sous un préfixe secret dérivé du token (l'hôte
+ * public du store apparaît dans les URLs d'uploads ; le préfixe empêche de
+ * deviner les chemins des données).
  */
 export const DATA_DIR = process.env.VERCEL
   ? "/tmp/cdt-data-store"
   : path.join(process.cwd(), "data-store");
 
-async function readJson<T>(file: string, seed: T): Promise<T> {
+const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
+const useBlob = Boolean(BLOB_TOKEN);
+
+const blobPrefix = () =>
+  "cdt-" + createHash("sha256").update(BLOB_TOKEN ?? "").digest("hex").slice(0, 20);
+
+const blobPath = (file: string) => `${blobPrefix()}/${file}`;
+
+export async function readJson<T>(file: string, seed: T): Promise<T> {
+  if (useBlob) {
+    try {
+      const info = await head(blobPath(file));
+      const res = await fetch(info.url, { cache: "no-store" });
+      if (!res.ok) return seed;
+      return (await res.json()) as T;
+    } catch {
+      return seed;
+    }
+  }
   try {
     const raw = await fs.readFile(path.join(DATA_DIR, file), "utf-8");
     return JSON.parse(raw) as T;
@@ -34,8 +58,54 @@ async function readJson<T>(file: string, seed: T): Promise<T> {
 }
 
 export async function writeJson(file: string, data: unknown): Promise<void> {
+  if (useBlob) {
+    await put(blobPath(file), JSON.stringify(data), {
+      access: "public",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      contentType: "application/json",
+      cacheControlMaxAge: 0,
+    });
+    return;
+  }
   await fs.mkdir(DATA_DIR, { recursive: true });
   await fs.writeFile(path.join(DATA_DIR, file), JSON.stringify(data, null, 2), "utf-8");
+}
+
+export async function deleteStored(file: string): Promise<void> {
+  if (useBlob) {
+    try {
+      const info = await head(blobPath(file));
+      await del(info.url);
+    } catch {}
+    return;
+  }
+  try {
+    await fs.unlink(path.join(DATA_DIR, file));
+  } catch {}
+}
+
+/**
+ * Sauvegarde d'un fichier binaire uploadé (logo, photo).
+ * Blob → URL publique du blob ; local → data-store/uploads servi par /api/uploads.
+ */
+export async function saveUpload(
+  name: string,
+  data: Buffer,
+  contentType: string
+): Promise<string> {
+  if (useBlob) {
+    const blob = await put(`uploads/${name}`, data, {
+      access: "public",
+      addRandomSuffix: false,
+      contentType,
+    });
+    return blob.url;
+  }
+  const dir = path.join(DATA_DIR, "uploads");
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(path.join(dir, name), data);
+  return `/api/uploads/${name}`;
 }
 
 /* ---------- Collections éditoriales ---------- */

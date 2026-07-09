@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
-import { DATA_DIR, uid } from "@/lib/store";
+import { saveUpload, uid } from "@/lib/store";
 
 const ALLOWED: Record<string, string> = {
   "image/png": "png",
@@ -30,9 +28,7 @@ export async function POST(req: Request) {
   }
 
   const name = `${uid()}.${ext}`;
-  const dir = path.join(DATA_DIR, "uploads");
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));
+  const url = await saveUpload(name, Buffer.from(await file.arrayBuffer()), file.type);
 
-  return NextResponse.json({ ok: true, url: `/api/uploads/${name}` });
+  return NextResponse.json({ ok: true, url });
 }
