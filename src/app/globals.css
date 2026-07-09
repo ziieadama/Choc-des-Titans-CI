@@ -99,6 +99,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Blocage du défilement horizontal : la page ne bouge jamais de gauche à
+   droite, même pendant les animations d'entrée. */
+html,
+body {
+  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 body {
   background: var(--body-gradient);
   background-attachment: fixed;

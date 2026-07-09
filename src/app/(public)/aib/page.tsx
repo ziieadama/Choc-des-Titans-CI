@@ -307,7 +307,7 @@ export default async function AibPage() {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <SectionHeader kicker={t("aib.press.kicker")} title={t("aib.press.title")} />
             <Reveal delay={0.1}>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 <SocialRow size="sm" />
                 <Link
                   href="/actualites"

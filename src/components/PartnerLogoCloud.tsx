@@ -80,13 +80,17 @@ export default function PartnerLogoCloud({ partners }: { partners: Partner[] }) 
                     alt={p.name}
                     loading="lazy"
                     className="logo-raw object-contain opacity-90 transition-all duration-300 group-hover:opacity-100 group-hover:drop-shadow-[0_6px_20px_rgba(38,111,179,0.35)]"
-                    style={{ height: h, width: "auto", maxWidth: h * 2.6 }}
+                    style={{
+                      height: `min(${h}px, 15vw + 16px)`,
+                      width: "auto",
+                      maxWidth: `min(${Math.round(h * 2.6)}px, 64vw)`,
+                    }}
                   />
                 ) : (
                   // Sans logo : monogramme typographique épuré, sans bloc
                   <span
                     className="font-display inline-flex items-baseline gap-1 leading-none tracking-wide transition-all duration-300 group-hover:drop-shadow-[0_6px_20px_rgba(38,111,179,0.35)]"
-                    style={{ fontSize: h * 0.62, color: p.color }}
+                    style={{ fontSize: `min(${Math.round(h * 0.62)}px, 9vw + 8px)`, color: p.color }}
                   >
                     {p.initials}
                   </span>
