@@ -7,7 +7,10 @@ import type { Partner } from "@/data/types";
 import { useLocale } from "./LocaleProvider";
 import type { DictKey } from "@/lib/i18n";
 
-/** Vignette logo / monogramme d'un partenaire. */
+/**
+ * Vignette d'un partenaire : logo BRUT (sans cadre ni fond) quand il existe,
+ * monogramme coloré élégant à défaut.
+ */
 export function PartnerBadge({
   partner,
   size = 48,
@@ -19,18 +22,14 @@ export function PartnerBadge({
 }) {
   if (partner.logo) {
     return (
-      <span
-        className={`inline-flex items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-black/5 ${className}`}
-        style={{ width: size, height: size }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={partner.logo}
-          alt={partner.name}
-          className="h-full w-full object-contain p-1.5"
-          loading="lazy"
-        />
-      </span>
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={partner.logo}
+        alt={partner.name}
+        loading="lazy"
+        className={`logo-raw inline-block object-contain ${className}`}
+        style={{ height: size, width: "auto", maxWidth: size * 2.4 }}
+      />
     );
   }
   return (
