@@ -30,6 +30,126 @@ export function Field({
   );
 }
 
+/** Grande partie numérotée (ex : « 1. Page d'accueil »). */
+export function SectionCard({
+  number,
+  title,
+  description,
+  icon,
+  children,
+}: {
+  number: string;
+  title: string;
+  description?: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="glass-light mt-6 overflow-hidden rounded-2xl">
+      <header className="flex items-start gap-4 border-b border-white/8 bg-white/5 px-6 py-5">
+        <span className="font-display inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue text-lg text-white">
+          {number}
+        </span>
+        <div className="min-w-0">
+          <h2 className="flex items-center gap-2 text-base font-bold text-white">
+            {icon}
+            {title}
+          </h2>
+          {description && (
+            <p className="mt-0.5 text-sm leading-relaxed text-muted">{description}</p>
+          )}
+        </div>
+      </header>
+      <div className="space-y-8 p-6">{children}</div>
+    </section>
+  );
+}
+
+/** Sous-partie (ex : « 1.2 — Le badge au-dessus du titre »). */
+export function SubSection({
+  number,
+  title,
+  description,
+  children,
+}: {
+  number: string;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <h3 className="flex items-center gap-2 text-sm font-bold text-white">
+        <span className="tabular rounded bg-blue/12 px-2 py-0.5 text-xs font-bold text-blue-light">
+          {number}
+        </span>
+        {title}
+      </h3>
+      {description && (
+        <p className="mt-1 text-xs leading-relaxed text-muted">{description}</p>
+      )}
+      <div className="mt-3 space-y-4">{children}</div>
+    </div>
+  );
+}
+
+/** Badge « traduction automatique ». */
+export function AutoTranslateBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-ci-green/12 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ci-green">
+      🌐 Anglais traduit automatiquement
+    </span>
+  );
+}
+
+/**
+ * Champ texte français unique — la version anglaise du site est générée
+ * automatiquement à l'enregistrement.
+ */
+export function FrField({
+  label,
+  value,
+  onChange,
+  rows,
+  placeholder,
+  example,
+}: {
+  label: string;
+  value: { fr: string; en: string };
+  onChange: (v: { fr: string; en: string }) => void;
+  rows?: number;
+  placeholder?: string;
+  example?: string;
+}) {
+  return (
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-white/60">
+          {label}
+        </label>
+        <AutoTranslateBadge />
+      </div>
+      {rows ? (
+        <textarea
+          rows={rows}
+          value={value.fr}
+          onChange={(e) => onChange({ ...value, fr: e.target.value })}
+          placeholder={placeholder}
+          className={`mt-1.5 resize-none ${inputCls}`}
+        />
+      ) : (
+        <input
+          value={value.fr}
+          onChange={(e) => onChange({ ...value, fr: e.target.value })}
+          placeholder={placeholder}
+          className={`mt-1.5 ${inputCls}`}
+        />
+      )}
+      {example && <p className="mt-1 text-[11px] text-white/35">Exemple : {example}</p>}
+    </div>
+  );
+}
+
 /** Paire FR/EN côte à côte. */
 export function BilingualField({
   label,

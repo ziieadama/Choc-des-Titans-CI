@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   LayoutDashboard,
   Ticket,
@@ -83,15 +84,13 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   const brand = (
     <div className="flex items-center gap-3 px-6 py-5">
-      <span className="inline-flex rounded-full bg-white p-1">
-        <Image
-          src="/images/brand/logo-cdt-sm.png"
-          alt="Choc des Titans"
-          width={34}
-          height={34}
-          className="h-8 w-8 object-contain"
-        />
-      </span>
+      <Image
+        src="/images/brand/logo-cdt-sm.png"
+        alt="Choc des Titans"
+        width={38}
+        height={38}
+        className="brand-logo h-9 w-9 object-contain"
+      />
       <div>
         <p className="font-display text-sm uppercase leading-tight text-white">
           Back Office
@@ -116,6 +115,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   const footer = (
     <div className="border-t border-white/8 px-3 py-4 space-y-1">
+      <div className="flex items-center justify-between rounded-lg px-3.5 py-1.5">
+        <span className="text-xs font-semibold uppercase tracking-wider text-white/50">
+          Thème clair / sombre
+        </span>
+        <ThemeToggle />
+      </div>
       <Link
         href="/"
         target="_blank"
@@ -135,27 +140,28 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   );
 
   return (
-    <div className="dark-section flex min-h-dvh bg-[#0b0b0b] text-[#f4f6f8]">
+    <div className="flex min-h-dvh">
       {/* Sidebar desktop */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/8 bg-[#111214] lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-line bg-carbon lg:flex">
         {brand}
         {nav}
         {footer}
       </aside>
 
       {/* Topbar mobile */}
-      <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-white/8 bg-[#111214] px-4 py-3 lg:hidden">
+      <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-line bg-carbon px-4 py-3 lg:hidden">
         <div className="flex items-center gap-2">
-          <span className="inline-flex rounded-full bg-white p-0.5">
-            <Image
-              src="/images/brand/logo-cdt-sm.png"
-              alt=""
-              width={28}
-              height={28}
-              className="h-7 w-7 object-contain"
-            />
-          </span>
+          <Image
+            src="/images/brand/logo-cdt-sm.png"
+            alt=""
+            width={28}
+            height={28}
+            className="brand-logo h-7 w-7 object-contain"
+          />
           <span className="font-display text-sm uppercase text-white">Back Office</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
         </div>
         <button
           onClick={() => setOpen(!open)}
@@ -171,7 +177,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div className="fixed inset-0 z-30 lg:hidden" onClick={() => setOpen(false)}>
           <div className="absolute inset-0 bg-black/60" />
           <aside
-            className="absolute inset-y-0 left-0 flex w-72 flex-col bg-[#111214] pt-16"
+            className="absolute inset-y-0 left-0 flex w-72 flex-col bg-carbon pt-16"
             onClick={(e) => e.stopPropagation()}
           >
             {nav}

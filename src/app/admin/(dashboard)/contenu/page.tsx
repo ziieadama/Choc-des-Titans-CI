@@ -1,17 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Home, Landmark, ExternalLink } from "lucide-react";
+import { Loader2, Home, Landmark, ExternalLink, Hash } from "lucide-react";
 import type { SiteContent } from "@/lib/store";
 import {
   Field,
-  BilingualField,
+  FrField,
   ImagePicker,
   SaveBar,
+  SectionCard,
+  SubSection,
+  AutoTranslateBadge,
   inputCls,
 } from "@/components/admin/ui";
 
-/** Édition du contenu de la page d'accueil et de la section AIB. */
+/**
+ * Édition du contenu de la page d'accueil et de la page AIB.
+ * Saisie en français uniquement — l'anglais est traduit automatiquement
+ * à l'enregistrement.
+ */
 export default function AdminContenuPage() {
   const [content, setContent] = useState<SiteContent | null>(null);
   const [saving, setSaving] = useState(false);
@@ -37,6 +44,9 @@ export default function AdminContenuPage() {
       alert("Enregistrement impossible.");
       return;
     }
+    // Récupère les traductions générées côté serveur
+    const data = await res.json();
+    if (data.content) setContent(data.content);
     setSaved(true);
     setTimeout(() => setSaved(false), 3500);
   };
@@ -49,15 +59,24 @@ export default function AdminContenuPage() {
     );
   }
 
+  /** Éditeur d'un chiffre clé : chiffre + symbole + texte descriptif. */
   const statEditor = (
     stats: SiteContent["stats"],
-    onChange: (s: SiteContent["stats"]) => void
+    onChange: (s: SiteContent["stats"]) => void,
+    exemples: string[]
   ) => (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-2">
       {stats.map((s, i) => (
-        <div key={i} className="rounded-xl border border-white/8 p-4">
+        <div key={i} className="rounded-xl border border-white/8 bg-white/5 p-4">
+          <p className="mb-3 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-blue-light">
+            <Hash size={12} />
+            Chiffre clé n°{i + 1}
+          </p>
           <div className="grid grid-cols-2 gap-3">
-            <Field label={`Valeur ${i + 1}`}>
+            <Field
+              label="Le chiffre affiché"
+              hint={`Exemple : ${exemples[i]?.split("|")[0] ?? "7"}`}
+            >
               <input
                 type="number"
                 value={s.value}
@@ -69,7 +88,10 @@ export default function AdminContenuPage() {
                 className={`tabular ${inputCls}`}
               />
             </Field>
-            <Field label="Suffixe">
+            <Field
+              label="Symbole après le chiffre"
+              hint="« + » pour afficher 40+, vide sinon"
+            >
               <input
                 value={s.suffix}
                 onChange={(e) => {
@@ -83,8 +105,9 @@ export default function AdminContenuPage() {
             </Field>
           </div>
           <div className="mt-3">
-            <BilingualField
-              label="Libellé"
+            <FrField
+              label="Texte affiché sous le chiffre"
+              example={exemples[i]?.split("|")[1] ?? "Éditions"}
               value={s.label}
               onChange={(label) => {
                 const next = [...stats];
@@ -104,7 +127,8 @@ export default function AdminContenuPage() {
         <div>
           <h1 className="font-display text-3xl uppercase text-white">Contenu du site</h1>
           <p className="mt-1 text-sm text-muted">
-            Page d&apos;accueil et section AIB — publié dès l&apos;enregistrement.
+            Textes et images de la page d&apos;accueil et de la page AIB.
+            Saisissez en français : l&apos;anglais est traduit automatiquement.
           </p>
         </div>
         <a
@@ -117,85 +141,115 @@ export default function AdminContenuPage() {
         </a>
       </div>
 
-      {/* ===== Accueil ===== */}
-      <section className="glass-light mt-8 rounded-2xl p-6 sm:p-7">
-        <h2 className="flex items-center gap-2 text-base font-bold text-white">
-          <Home size={17} className="text-blue-light" />
-          Page d&apos;accueil — Héro
-        </h2>
-        <div className="mt-5 space-y-5">
+      {/* ============ 1. PAGE D'ACCUEIL ============ */}
+      <SectionCard
+        number="1"
+        title="Page d'accueil"
+        description="La première page que voient les visiteurs : grande photo, phrase d'accroche et chiffres clés."
+        icon={<Home size={16} className="text-blue-light" />}
+      >
+        <SubSection
+          number="1.1"
+          title="La grande photo d'en-tête"
+          description="Photo plein écran affichée en haut de la page d'accueil, derrière le titre « Le Choc des Titans »."
+        >
           <ImagePicker
-            label="Image principale du héro"
+            label="Photo d'en-tête"
+            hint="Choisissez une photo spectaculaire au format paysage (combat, ambiance…)."
             value={content.hero.image}
             onChange={(image) =>
               setContent({ ...content, hero: { ...content.hero, image } })
             }
           />
-          <BilingualField
-            label="Badge (au-dessus du titre)"
+        </SubSection>
+
+        <SubSection
+          number="1.2"
+          title="Le petit badge au-dessus du titre"
+          description="La petite étiquette bleue affichée tout en haut, qui annonce l'édition en cours."
+        >
+          <FrField
+            label="Texte du badge"
+            example="7ᵉ édition · Saison 2026 en cours"
             value={content.hero.badge}
             onChange={(badge) =>
               setContent({ ...content, hero: { ...content.hero, badge } })
             }
           />
-          <BilingualField
-            label="Texte d'introduction"
+        </SubSection>
+
+        <SubSection
+          number="1.3"
+          title="La phrase de présentation"
+          description="Le paragraphe affiché sous le titre, qui présente le Choc des Titans en quelques mots."
+        >
+          <FrField
+            label="Phrase de présentation"
             rows={3}
+            example="La grande arène ivoirienne de la boxe et du MMA…"
             value={content.hero.subtitle}
             onChange={(subtitle) =>
               setContent({ ...content, hero: { ...content.hero, subtitle } })
             }
           />
-        </div>
+        </SubSection>
 
-        <h3 className="mt-8 text-sm font-bold uppercase tracking-wider text-white/70">
-          Bandeau de statistiques
-        </h3>
-        <div className="mt-4">
-          {statEditor(content.stats, (stats) => setContent({ ...content, stats }))}
-        </div>
-      </section>
+        <SubSection
+          number="1.4"
+          title="Les 4 chiffres clés"
+          description="Le bandeau de statistiques affiché en bas de la photo d'en-tête (nombre d'éditions, de communes, de combats, de partenaires…)."
+        >
+          {statEditor(content.stats, (stats) => setContent({ ...content, stats }), [
+            "7|Éditions",
+            "6|Communes traversées",
+            "40|Combats de gala",
+            "42|Partenaires engagés",
+          ])}
+        </SubSection>
+      </SectionCard>
 
-      {/* ===== AIB ===== */}
-      <section className="glass-light mt-6 rounded-2xl p-6 sm:p-7">
-        <h2 className="flex items-center gap-2 text-base font-bold text-white">
-          <Landmark size={17} className="text-ci-orange" />
-          Section AIB — Le président
-        </h2>
-        <div className="mt-5 space-y-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Nom du président">
-              <input
-                value={content.aib.president.name}
-                onChange={(e) =>
-                  setContent({
-                    ...content,
-                    aib: {
-                      ...content.aib,
-                      president: { ...content.aib.president, name: e.target.value },
-                    },
-                  })
-                }
-                className={inputCls}
-              />
-            </Field>
-          </div>
+      {/* ============ 2. PAGE AIB ============ */}
+      <SectionCard
+        number="2"
+        title="Page AIB — Association Ivoirienne de Boxe"
+        description="La page institutionnelle de l'AIB : le mot du président, les chiffres de l'association et ses trois piliers."
+        icon={<Landmark size={16} className="text-ci-orange" />}
+      >
+        <SubSection
+          number="2.1"
+          title="Le président"
+          description="Le grand portrait officiel et la citation affichés au centre de la page AIB."
+        >
+          <Field label="Nom complet du président">
+            <input
+              value={content.aib.president.name}
+              onChange={(e) =>
+                setContent({
+                  ...content,
+                  aib: {
+                    ...content.aib,
+                    president: { ...content.aib.president, name: e.target.value },
+                  },
+                })
+              }
+              className={inputCls}
+              placeholder="Jhimmy Traoré"
+            />
+          </Field>
           <ImagePicker
             label="Photo officielle du président"
-            hint="Portrait vertical recommandé (3:4). Remplacez le placeholder par la photo bras croisés."
+            hint="Portrait vertical bien cadré (le placeholder actuel est à remplacer par la photo bras croisés)."
             value={content.aib.president.photo}
             onChange={(photo) =>
               setContent({
                 ...content,
-                aib: {
-                  ...content.aib,
-                  president: { ...content.aib.president, photo },
-                },
+                aib: { ...content.aib, president: { ...content.aib.president, photo } },
               })
             }
           />
-          <BilingualField
-            label="Fonction"
+          <FrField
+            label="Sa fonction officielle"
+            example="Président de l'Association Ivoirienne de Boxe · Promoteur du Choc des Titans"
             value={content.aib.president.role}
             onChange={(role) =>
               setContent({
@@ -204,9 +258,10 @@ export default function AdminContenuPage() {
               })
             }
           />
-          <BilingualField
-            label="Citation (mot du président)"
+          <FrField
+            label="Sa citation (le mot du président)"
             rows={4}
+            example="La boxe m'a tout appris : la discipline, le respect…"
             value={content.aib.president.quote}
             onChange={(quote) =>
               setContent({
@@ -215,48 +270,66 @@ export default function AdminContenuPage() {
               })
             }
           />
-        </div>
+        </SubSection>
 
-        <h3 className="mt-8 text-sm font-bold uppercase tracking-wider text-white/70">
-          Chiffres clés de l&apos;AIB
-        </h3>
-        <div className="mt-4">
-          {statEditor(content.aib.stats, (stats) =>
-            setContent({ ...content, aib: { ...content.aib, stats } })
+        <SubSection
+          number="2.2"
+          title="Les 4 chiffres clés de l'AIB"
+          description="Le bandeau de statistiques de la page AIB (clubs affiliés, licenciés, régions couvertes…)."
+        >
+          {statEditor(
+            content.aib.stats,
+            (stats) => setContent({ ...content, aib: { ...content.aib, stats } }),
+            ["42|Clubs affiliés", "950|Licenciés", "16|Régions couvertes", "7|Éditions du CDT"]
           )}
-        </div>
+        </SubSection>
 
-        <h3 className="mt-8 text-sm font-bold uppercase tracking-wider text-white/70">
-          Mission · Vision · Engagements
-        </h3>
-        <div className="mt-4 space-y-4">
-          {content.aib.mvv.map((item, i) => (
-            <div key={i} className="rounded-xl border border-white/8 p-4">
-              <BilingualField
-                label={`Titre ${i + 1}`}
-                value={item.title}
-                onChange={(title) => {
-                  const mvv = [...content.aib.mvv];
-                  mvv[i] = { ...item, title };
-                  setContent({ ...content, aib: { ...content.aib, mvv } });
-                }}
-              />
-              <div className="mt-3">
-                <BilingualField
-                  label="Texte"
-                  rows={3}
-                  value={item.text}
-                  onChange={(text) => {
+        <SubSection
+          number="2.3"
+          title="Les 3 piliers : Mission, Vision, Engagements"
+          description="Les trois cartes affichées sous le titre « Mission, vision, engagements » de la page AIB."
+        >
+          <div className="space-y-4">
+            {content.aib.mvv.map((item, i) => (
+              <div key={i} className="rounded-xl border border-white/8 bg-white/5 p-4">
+                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-blue-light">
+                  Carte n°{i + 1}
+                </p>
+                <FrField
+                  label="Titre de la carte"
+                  example={["Notre mission", "Notre vision", "Nos engagements"][i] ?? "Notre mission"}
+                  value={item.title}
+                  onChange={(title) => {
                     const mvv = [...content.aib.mvv];
-                    mvv[i] = { ...item, text };
+                    mvv[i] = { ...item, title };
                     setContent({ ...content, aib: { ...content.aib, mvv } });
                   }}
                 />
+                <div className="mt-3">
+                  <FrField
+                    label="Texte de la carte"
+                    rows={3}
+                    value={item.text}
+                    onChange={(text) => {
+                      const mvv = [...content.aib.mvv];
+                      mvv[i] = { ...item, text };
+                      setContent({ ...content, aib: { ...content.aib, mvv } });
+                    }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </SubSection>
+      </SectionCard>
+
+      <div className="mt-4 flex items-center gap-2 rounded-xl bg-ci-green/8 px-4 py-3">
+        <AutoTranslateBadge />
+        <p className="text-xs text-muted">
+          À l&apos;enregistrement, tous les textes modifiés sont traduits en anglais
+          pour la version EN du site. Les textes inchangés gardent leur traduction.
+        </p>
+      </div>
 
       <SaveBar onSave={save} saving={saving} saved={saved} />
     </div>

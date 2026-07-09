@@ -43,15 +43,13 @@ function LoginForm() {
       className="glass w-full max-w-md rounded-2xl p-8 sm:p-10"
     >
       <div className="flex items-center gap-4">
-        <span className="inline-flex rounded-full bg-white p-1.5">
-          <Image
-            src="/images/brand/logo-cdt-sm.png"
-            alt="Choc des Titans"
-            width={48}
-            height={48}
-            className="h-12 w-12 object-contain"
-          />
-        </span>
+        <Image
+          src="/images/brand/logo-cdt-sm.png"
+          alt="Choc des Titans"
+          width={52}
+          height={52}
+          className="brand-logo h-13 w-13 object-contain"
+        />
         <div>
           <h1 className="font-display text-xl uppercase text-white">
             Back Office
@@ -141,7 +139,7 @@ function LoginForm() {
 
 export default function AdminLoginPage() {
   return (
-    <div className="dark-section relative flex min-h-dvh items-center justify-center overflow-hidden bg-[#0b0b0b] px-4">
+    <div className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4">
       <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-blue/12 blur-[130px]" />
       <div className="pointer-events-none absolute -right-32 bottom-10 h-96 w-96 rounded-full bg-red/10 blur-[130px]" />
       <Suspense>
