@@ -30,6 +30,13 @@ export default function PartnerLogoCloud({ partners }: { partners: Partner[] }) 
     return Math.round(30 + (reach / 100) * 62);
   };
 
+  // Agrandissement au survol proportionnel à la portée du partenariat :
+  // reach 10 → ×1.10 · reach 50 → ×1.24 · reach 100 → ×1.42
+  const hoverScaleOf = (p: Partner) => {
+    const reach = Math.min(Math.max(p.reach ?? 40, 10), 100);
+    return 1.06 + (reach / 100) * 0.36;
+  };
+
   return (
     <>
       <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-9 sm:gap-x-14">
@@ -47,7 +54,11 @@ export default function PartnerLogoCloud({ partners }: { partners: Partner[] }) 
                 stiffness: 200,
                 delay: (i % 10) * 0.05,
               }}
-              whileHover={{ scale: 1.12, zIndex: 5 }}
+              whileHover={{
+                scale: hoverScaleOf(p),
+                rotate: (i % 2 ? 1 : -1) * 1.5,
+                zIndex: 5,
+              }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelected(p)}
               title={p.name}
